@@ -4,6 +4,7 @@ import com.beatrizgg.msclients.dto.ClientDtoRequest;
 import com.beatrizgg.msclients.model.Client;
 import com.beatrizgg.msclients.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,12 +15,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/clients")
 @RequiredArgsConstructor
+@Slf4j
 public class ClientController {
 
     private final ClientService clientService;
 
     @GetMapping
     public String status() {
+        log.info("Clients microservices status");
         return "ok";
     }
 

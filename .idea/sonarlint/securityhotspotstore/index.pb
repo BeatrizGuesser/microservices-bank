@@ -13,3 +13,13 @@ A
 eurekaserver/mvnw,3\8\38bd57fb929676d88db521d24507adcee71da0dd
 E
 eurekaserver/mvnw.cmd,1\0\10f641fc612b0dcb11295982d6dca492e5da3313
+q
+Amsclients/src/main/java/com/beatrizgg/msclients/model/Client.java,7\6\76f626c39a2c3b908ae0dace74a48c63da6b3cce
+€
+Pmsclients/src/main/java/com/beatrizgg/msclients/repository/ClientRepository.java,c\3\c368472abaad0da48f7a016cae8c41fe8973d947
+€
+Pmsclients/src/main/java/com/beatrizgg/msclients/controller/ClientController.java,4\2\42850c73a182fb6e4660cd891d2ee9abe31e4b84
+z
+Jmsclients/src/main/java/com/beatrizgg/msclients/service/ClientService.java,8\7\876ef8ea76e6349a127025e6790d8ea859ccba4c
+y
+Imsclients/src/main/java/com/beatrizgg/msclients/dto/ClientDtoRequest.java,f\9\f95baf6dbd6aa6aa9330f32a3b20461813903b84
