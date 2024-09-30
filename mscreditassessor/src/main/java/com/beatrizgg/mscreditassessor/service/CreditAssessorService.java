@@ -4,16 +4,16 @@ import com.beatrizgg.mscreditassessor.FeignClient.CardsFeignClient;
 import com.beatrizgg.mscreditassessor.FeignClient.ClientFeignClient;
 import com.beatrizgg.mscreditassessor.exception.ClientDataNotFound;
 import com.beatrizgg.mscreditassessor.exception.MicroservicesCommunicationErrorException;
-import com.beatrizgg.mscreditassessor.model.ClientCards;
-import com.beatrizgg.mscreditassessor.model.ClientData;
-import com.beatrizgg.mscreditassessor.model.ClientSituation;
+import com.beatrizgg.mscreditassessor.model.*;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +32,42 @@ public class CreditAssessorService {
                     .client(clientDataResponseEntity.getBody())
                     .cards(clientCardsResponseEntity.getBody())
                     .build();
+
+        } catch (FeignException.FeignClientException e) {
+            int status = e.status();
+
+            if (HttpStatus.NOT_FOUND.value() == status) {
+                throw new ClientDataNotFound();
+            }
+
+            throw new MicroservicesCommunicationErrorException(e.getMessage(), status);
+        }
+    }
+
+    public ClientAssessmentReturn postAssessment(String cpf, Long income) throws ClientDataNotFound, MicroservicesCommunicationErrorException {
+        try {
+            ResponseEntity<ClientData> clientDataResponseEntity = clientFeignClient.clientData(cpf);
+            ResponseEntity<List<Card>> cardsResponseEntity = cardsFeignClient.getCardsIncomeUpTo(income);
+            
+            List<Card> cards = cardsResponseEntity.getBody();
+            var approvedCardsList = cards.stream().map(card -> {
+
+                ClientData clientData = clientDataResponseEntity.getBody();
+
+                BigDecimal basicLimit = card.getBasicLimit();
+                BigDecimal ageDB = BigDecimal.valueOf(clientData.getAge());
+                var factor = ageDB.divide(BigDecimal.valueOf(10));
+                BigDecimal approvedLimit = factor.multiply(basicLimit);
+
+                ApprovedCard approvedCard = new ApprovedCard();
+                approvedCard.setCard(card.getName());
+                approvedCard.setBrand(card.getBrand());
+                approvedCard.setReleasedLimit(approvedLimit);
+
+                return approvedCard;
+            }).collect(Collectors.toList());
+
+            return new ClientAssessmentReturn(approvedCardsList);
 
         } catch (FeignException.FeignClientException e) {
             int status = e.status();

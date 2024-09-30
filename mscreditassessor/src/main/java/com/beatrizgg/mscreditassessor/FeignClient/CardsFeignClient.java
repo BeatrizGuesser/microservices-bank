@@ -1,5 +1,6 @@
 package com.beatrizgg.mscreditassessor.FeignClient;
 
+import com.beatrizgg.mscreditassessor.model.Card;
 import com.beatrizgg.mscreditassessor.model.ClientCards;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -13,4 +14,7 @@ public interface CardsFeignClient {
 
     @GetMapping(params = "cpf")
     ResponseEntity<List<ClientCards>> getCardsByClient(@RequestParam("cpf") String cpf);
+
+    @GetMapping(params = "income")
+    ResponseEntity<List<Card>> getCardsIncomeUpTo(@RequestParam("income") Long income);
 }

@@ -2,10 +2,12 @@ package com.beatrizgg.mscreditassessor.model;
 
 import lombok.Data;
 
-@Data
-public class ClientData {
+import java.math.BigDecimal;
 
+@Data
+public class Card {
     private Long id;
     private String name;
-    private Integer age;
+    private String brand;
+    private BigDecimal basicLimit;
 }
