@@ -1,10 +1,9 @@
 package com.beatrizgg.mscreditassessor.controller;
 
+import com.beatrizgg.mscreditassessor.exception.CardRequestErrorException;
 import com.beatrizgg.mscreditassessor.exception.ClientDataNotFound;
 import com.beatrizgg.mscreditassessor.exception.MicroservicesCommunicationErrorException;
-import com.beatrizgg.mscreditassessor.model.AssessmentData;
-import com.beatrizgg.mscreditassessor.model.ClientAssessmentReturn;
-import com.beatrizgg.mscreditassessor.model.ClientSituation;
+import com.beatrizgg.mscreditassessor.model.*;
 import com.beatrizgg.mscreditassessor.service.CreditAssessorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,6 +45,17 @@ public class CreditAssessorController {
             return ResponseEntity.notFound().build();
         } catch (MicroservicesCommunicationErrorException e) {
             return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/card-requests")
+    public ResponseEntity requestCard(@RequestBody CardIssuanceRequestData cardIssuanceRequestData) {
+        try {
+            CardRequestProtocol cardRequestProtocol = creditAssessorService.requestCardIssuance(cardIssuanceRequestData);
+            return ResponseEntity.ok(cardRequestProtocol);
+
+        } catch (CardRequestErrorException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 }

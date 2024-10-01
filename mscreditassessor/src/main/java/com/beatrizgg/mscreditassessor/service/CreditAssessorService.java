@@ -2,9 +2,11 @@ package com.beatrizgg.mscreditassessor.service;
 
 import com.beatrizgg.mscreditassessor.FeignClient.CardsFeignClient;
 import com.beatrizgg.mscreditassessor.FeignClient.ClientFeignClient;
+import com.beatrizgg.mscreditassessor.exception.CardRequestErrorException;
 import com.beatrizgg.mscreditassessor.exception.ClientDataNotFound;
 import com.beatrizgg.mscreditassessor.exception.MicroservicesCommunicationErrorException;
 import com.beatrizgg.mscreditassessor.model.*;
+import com.beatrizgg.mscreditassessor.mqueue.CardIssuanceRequestPublisher;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +24,7 @@ public class CreditAssessorService {
 
     private final ClientFeignClient clientFeignClient;
     private final CardsFeignClient cardsFeignClient;
+    private final CardIssuanceRequestPublisher cardIssuanceRequestPublisher;
 
     public ClientSituation getClientSituation(String cpf) throws ClientDataNotFound, MicroservicesCommunicationErrorException {
         try {
@@ -77,6 +81,16 @@ public class CreditAssessorService {
             }
 
             throw new MicroservicesCommunicationErrorException(e.getMessage(), status);
+        }
+    }
+
+    public CardRequestProtocol requestCardIssuance(CardIssuanceRequestData cardIssuanceRequestData) {
+        try {
+            cardIssuanceRequestPublisher.requestCard(cardIssuanceRequestData);
+            var protocol = UUID.randomUUID().toString();
+            return new CardRequestProtocol(protocol);
+        } catch (Exception e) {
+            throw new CardRequestErrorException(e.getMessage());
         }
     }
 }
