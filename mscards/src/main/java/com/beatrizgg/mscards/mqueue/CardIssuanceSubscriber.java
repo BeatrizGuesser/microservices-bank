@@ -36,7 +36,7 @@ public class CardIssuanceSubscriber {
             clientCardRepository.save(clientCard);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error when receiving card issuance request: {} ", e.getMessage());
         }
     }
 }
