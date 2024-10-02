@@ -1,6 +1,12 @@
 spring:
   application:
     name: eurekaserver
+  security:
+    basic:
+      enabled: true
+    user:
+      name: eureka-microservices-bank
+      password: nkuescamcvie-braies-okrer
 
 server:
   port: 8761
