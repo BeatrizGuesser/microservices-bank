@@ -15,13 +15,3 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-
-logging:
-  file:
-    name: ./logs/log-file.log
